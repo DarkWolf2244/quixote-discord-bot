@@ -1,10 +1,11 @@
 import { CacheType, Interaction, Client, Collection, Intents } from 'discord.js';
 import { approveQOTD, rejectQOTD, sendQOTD } from './QOTDManager';
+import * as node_schedule from 'node-schedule';
 
 import * as fs from 'fs';
 
 import express from 'express';
-import { send } from 'process';
+
 
 let client = new Client({
     intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES]
@@ -23,8 +24,6 @@ for (const file of commandFiles) {
 
 client.once('ready', () => {
     console.log("Quixote is up and running!");
-
-    setTimeout(sendQOTD, 1000, client);
 });
 
 client.on('interactionCreate',  async (interaction) => {
@@ -58,4 +57,8 @@ app.get("/", (req, res) => {
 
 app.listen(process.env.PORT || 3000, () => {
     console.log("Express server is online.");
+});
+
+node_schedule.scheduleJob('0 0 * * *', () => {
+    sendQOTD(client);
 });
