@@ -1,5 +1,6 @@
 import { CacheType, Interaction, Client, Collection, Intents } from 'discord.js';
-import fs from 'fs';
+import * as fs from 'fs';
+
 import express from 'express';
 
 let client = new Client({
