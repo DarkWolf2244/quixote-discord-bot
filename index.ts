@@ -1,5 +1,6 @@
 import { CacheType, Interaction, Client, Collection, Intents } from 'discord.js';
 import fs from 'fs';
+import express from 'express';
 
 let client = new Client({
     intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES]
@@ -34,3 +35,13 @@ client.on('interactionCreate', (interaction) => {
 });
 
 client.login(process.env.DISTOKEN);
+
+let app = express();
+
+app.get("/", (req, res) => {
+    res.send("Quixote is running.");
+});
+
+app.listen(80, () => {
+    console.log("Express server is online/");
+});
