@@ -12,8 +12,7 @@ module.exports = {
 
     async execute(interaction: any) {
         const qotd = interaction.options.getString("qotd");
-        const user = interaction.message.author;
-        const approvalMessageId = interaction.message.id;
-        interaction.reply("Thanks for your suggestion! I'll let the admins know about it.");
+        const user = interaction.user;
+        addQOTD(qotd, user, "0");
     }
 }
