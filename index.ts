@@ -22,14 +22,14 @@ client.once('ready', () => {
     console.log("Quixote is up and running!");
 });
 
-client.on('interactionCreate', (interaction) => {
+client.on('interactionCreate',  async (interaction) => {
     if (!interaction.isCommand()) return;
 
     const command: any = commands.get(interaction.commandName);
     if (!command) return interaction.reply("Unknown command!");
 
     try {
-        command.execute(interaction);
+        await command.execute(interaction);
     } catch (error) {
         interaction.reply(`An error occured while executing this command. Lemme call @DarkWolf#8595.`);
     }
