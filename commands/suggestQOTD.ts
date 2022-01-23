@@ -1,4 +1,5 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
+import { MessageEmbed, MessageActionRow, MessageButton } from "discord.js";
 import { writeConfig, readConfig } from "../ConfigManager";
 import { addQOTD } from "../QOTDManager";
 
@@ -13,7 +14,47 @@ module.exports = {
     async execute(interaction: any) {
         const qotd = interaction.options.getString("qotd");
         const user = interaction.user;
-        addQOTD(qotd, user, "0");
-        interaction.reply("Suggestion recorded!", { ephmeral: true });
+
+        let approvalChannel = interaction.client.channels.cache.get(readConfig().approvalChannel);
+
+        if (!approvalChannel) {
+            interaction.reply("Turns out the approval channel hasn't been set yet. Yell at CHT64 to set one.");
+        } else {
+            // Create an embed with all the info
+            let embedData = {
+                title: "QOTD Suggestion",
+                description: `Hey mods, here's a brand new QOTD suggested by <@${interaction.user.id}>. What do you think?`,
+                fields: [
+                    { name: "QOTD", value: qotd},
+                    { name: "Suggested By", value: `<@${interaction.user.id}>`}
+                ],
+                footer: {
+                    text: "Choose Approve or Reject. (Ban option coming soon)"
+                }
+            }
+
+            let embed = new MessageEmbed(embedData);
+
+            embed.setColor("GOLD");
+
+            let buttonRow = new MessageActionRow();
+
+            buttonRow.addComponents(
+                new MessageButton()
+                    .setCustomId("approve")
+                    .setLabel("Approve")
+                    .setStyle('SUCCESS'),
+                
+                new MessageButton()
+                    .setCustomId("reject")
+                    .setLabel("Reject")
+                    .setStyle('DANGER')
+            )
+
+            let sentMessage = await approvalChannel.send({ embeds: [embed], components: [buttonRow] });
+
+            addQOTD(qotd, user, sentMessage.id);
+            interaction.reply("Suggestion recorded!", { ephemeral: true });
+        }
     }
 }

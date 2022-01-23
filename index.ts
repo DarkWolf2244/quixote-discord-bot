@@ -1,7 +1,10 @@
 import { CacheType, Interaction, Client, Collection, Intents } from 'discord.js';
+import { approveQOTD, rejectQOTD, sendQOTD } from './QOTDManager';
+
 import * as fs from 'fs';
 
 import express from 'express';
+import { send } from 'process';
 
 let client = new Client({
     intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES]
@@ -20,19 +23,29 @@ for (const file of commandFiles) {
 
 client.once('ready', () => {
     console.log("Quixote is up and running!");
+
+    setTimeout(sendQOTD, 1000, client);
 });
 
 client.on('interactionCreate',  async (interaction) => {
-    if (!interaction.isCommand()) return;
+    if (interaction.isCommand()) {
+        const command: any = commands.get(interaction.commandName);
+        if (!command) return interaction.reply("Unknown command!");
 
-    const command: any = commands.get(interaction.commandName);
-    if (!command) return interaction.reply("Unknown command!");
-
-    try {
-        await command.execute(interaction);
-    } catch (error) {
-        interaction.reply(`An error occured while executing this command. Lemme call @DarkWolf#8595.`);
+        try {
+            await command.execute(interaction);
+        } catch (error) {
+            interaction.reply(`An error occured while executing this command. Lemme call @DarkWolf#8595.`);
+        }
+    } else if (interaction.isButton()) {
+        if (interaction.customId === 'approve') {
+            approveQOTD(interaction);
+        } else if (interaction.customId == "reject") {
+            rejectQOTD(interaction);
+        }
     }
+
+    
 });
 
 client.login(process.env.DISTOKEN);
@@ -44,5 +57,5 @@ app.get("/", (req, res) => {
 });
 
 app.listen(process.env.PORT || 3000, () => {
-    console.log("Express server is online/");
+    console.log("Express server is online.");
 });

@@ -24,7 +24,7 @@ module.exports = {
                 config.approvalChannel = interaction.channel.id;
                 break;
             default:
-                interaction.reply("That doesn't seem to be a valid option. Please use a valid channel type.", { ephmeral: true });
+                interaction.reply("That doesn't seem to be a valid option. Please use a valid channel type.", { ephemeral: true });
         }
 
         writeConfig(config);
