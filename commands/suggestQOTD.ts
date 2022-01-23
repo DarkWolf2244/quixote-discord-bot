@@ -14,5 +14,6 @@ module.exports = {
         const qotd = interaction.options.getString("qotd");
         const user = interaction.user;
         addQOTD(qotd, user, "0");
+        interaction.reply("Suggestion recorded!", { ephmeral: true });
     }
 }
