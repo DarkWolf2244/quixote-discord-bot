@@ -1,3 +1,5 @@
+import * as fs from 'fs';
+
 interface QOTDInterface {
     userID: string;
     content: string,
@@ -17,6 +19,8 @@ export function addQOTD(qotd: string, user: any, approvalMessageId: string) {
         content: qotd,
         approvalMessageId: approvalMessageId
     });
+
+    fs.writeFileSync('./qotd.json', JSON.stringify(qotds, null, 4));
 }
 
 export function approveQOTD(approvalMessageID) {
