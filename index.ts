@@ -42,6 +42,6 @@ app.get("/", (req, res) => {
     res.send("Quixote is running.");
 });
 
-app.listen(80, () => {
+app.listen(process.env.PORT || 3000, () => {
     console.log("Express server is online/");
 });
