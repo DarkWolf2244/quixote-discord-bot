@@ -1,6 +1,7 @@
 import * as fs from 'fs';
-import { MessageEmbed } from 'discord.js';
+import { GuildMember, MessageEmbed, MessageEmbedOptions, User } from 'discord.js';
 import { readConfig, writeConfig } from './ConfigManager';
+import { Client } from 'discord.js';
 
 interface QOTDInterface {
     userID: string;
@@ -25,7 +26,7 @@ export function addQOTD(qotd: string, user: any, approvalMessageId: string) {
     fs.writeFileSync('./qotd.json', JSON.stringify(qotds, null, 4));
 }
 
-export function approveQOTD(interaction) {
+export function approveQOTD(interaction, waitingOnQOTD: boolean) {
     qotds.suggestions.forEach((qotd, index) => {
         if (qotd.approvalMessageId === interaction.message.id) {
             qotds.approvedQOTDs.push(qotd);
@@ -51,9 +52,12 @@ export function approveQOTD(interaction) {
     });
 
     fs.writeFileSync('./qotd.json', JSON.stringify(qotds, null, 4));
+
+    if (waitingOnQOTD) sendQOTD(interaction.client);
 }
 
 export function rejectQOTD(interaction) {
+    // TODO DM the user that their QOTD was rejected
     // Delete the QOTD suggestion
     qotds.suggestions.forEach((qotd, index) => {
         if (qotd.approvalMessageId === interaction.message.id) {
@@ -85,33 +89,46 @@ export function rejectQOTD(interaction) {
     
 }
 
-export function sendQOTD(client) {
-    let randomQOTD = qotds.approvedQOTDs[Math.floor(Math.random() * qotds.approvedQOTDs.length)];
-    let userWhoSent = client.users.fetch(randomQOTD.userID);
-    userWhoSent.then(user => {
-        userWhoSent = user;
-    });
+export function sendQOTD(client: Client<boolean>): boolean {
+    if (qotds.approvedQOTDs.length > 0) {
+        let randomQOTD = qotds.approvedQOTDs[Math.floor(Math.random() * qotds.approvedQOTDs.length)];
 
-    let qotdEmbed = {
-        title: "Question of the Day",
-        description: randomQOTD.content,
-    }
-
-    let readyEmbed = new MessageEmbed(qotdEmbed);
-
-    readyEmbed.setColor("BLUE");
-
-    client.channels.fetch(readConfig().qotdChannel).then(channel => {
-        channel.send({ embeds: [readyEmbed] });
-    });
-
-    // Remove the QOTD from the approved list
-    qotds.approvedQOTDs.forEach((qotd, index) => {
-        if (qotd.content === randomQOTD.content) {
-            qotds.approvedQOTDs.splice(index, 1);
-            return;
+        let qotdEmbed: MessageEmbedOptions = {
+            title: "Question of the Day",
+            description: randomQOTD.content
         }
-    });
 
-    fs.writeFileSync('./qotd.json', JSON.stringify(qotds, null, 4));
+        let readyEmbed = new MessageEmbed(qotdEmbed);
+
+        readyEmbed.setColor("BLUE");
+
+        client.channels.fetch(readConfig().qotdChannel).then((channel: any) => {
+            channel.send({ embeds: [readyEmbed] });
+        });
+
+        // Remove the QOTD from the approved list
+        qotds.approvedQOTDs.forEach((qotd, index) => {
+            if (qotd.content === randomQOTD.content) {
+                qotds.approvedQOTDs.splice(index, 1);
+                return;
+            }
+        });
+
+        fs.writeFileSync('./qotd.json', JSON.stringify(qotds, null, 4));
+
+        return false; // We aren't waiting for a QOTD
+
+    } else {
+        client.channels.fetch(readConfig().qotdChannel).then((channel: any) => {
+            let embed = new MessageEmbed({
+                title: "Question of the Day",
+                description: "No QOTDs available :( Suggest some!",
+                color: "RED"
+            });
+
+            channel.send({ embeds: [embed] });
+        });
+
+        return true; // We are waiting for a QOTD
+    }
 }

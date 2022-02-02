@@ -6,6 +6,7 @@ import * as fs from 'fs';
 
 import express from 'express';
 
+let waitingOnQOTD = false;
 
 let client = new Client({
     intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES]
@@ -38,7 +39,12 @@ client.on('interactionCreate',  async (interaction) => {
         }
     } else if (interaction.isButton()) {
         if (interaction.customId === 'approve') {
-            approveQOTD(interaction);
+            approveQOTD(interaction, waitingOnQOTD);
+
+            if (waitingOnQOTD) {
+                waitingOnQOTD = false;
+            }
+
         } else if (interaction.customId == "reject") {
             rejectQOTD(interaction);
         }
@@ -58,8 +64,11 @@ app.listen(process.env.PORT || 3000, () => {
 });
 
 node_schedule.scheduleJob('0 0 * * *', () => {
-    sendQOTD(client);
+    waitingOnQOTD = sendQOTD(client);
 });
+
+setInterval(() => { waitingOnQOTD = sendQOTD(client); }, 10000);
+
 
 // TODO Implement createQOTD command
 // TODO Implement sendQOTD command
