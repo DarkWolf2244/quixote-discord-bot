@@ -43,8 +43,6 @@ client.on('interactionCreate',  async (interaction) => {
             rejectQOTD(interaction);
         }
     }
-
-    
 });
 
 client.login(process.env.DISTOKEN);
@@ -62,3 +60,6 @@ app.listen(process.env.PORT || 3000, () => {
 node_schedule.scheduleJob('0 0 * * *', () => {
     sendQOTD(client);
 });
+
+// TODO Implement createQOTD command
+// TODO Implement sendQOTD command
