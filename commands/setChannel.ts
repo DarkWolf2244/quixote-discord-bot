@@ -10,6 +10,7 @@ module.exports = {
         .addStringOption(option => option.setName("channel").setRequired(true).setDescription("The channel to set the current channel to")),
     
     async execute(interaction: any) {
+        console.log(`Now setting ${interaction.options.getString("channel")}`);
         const channel = interaction.options.getString("channel");
         const config = readConfig();
         

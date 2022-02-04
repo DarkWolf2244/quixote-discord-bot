@@ -27,7 +27,7 @@ client.once('ready', () => {
     console.log("Quixote is up and running!");
 });
 
-client.on('interactionCreate',  async (interaction) => {
+client.on('interactionCreate',  async (interaction: Interaction<CacheType>) => {
     if (interaction.isCommand()) {
         const command: any = commands.get(interaction.commandName);
         if (!command) return interaction.reply("Unknown command!");
@@ -35,7 +35,7 @@ client.on('interactionCreate',  async (interaction) => {
         try {
             await command.execute(interaction);
         } catch (error) {
-            interaction.reply(`An error occured while executing this command. Lemme call @DarkWolf#8595.`);
+            interaction.reply(`An error occured while executing this command. Lemme call <@647419416178589706>`);
         }
     } else if (interaction.isButton()) {
         if (interaction.customId === 'approve') {
@@ -49,6 +49,10 @@ client.on('interactionCreate',  async (interaction) => {
             rejectQOTD(interaction);
         }
     }
+});
+
+client.on('message', (message) => {
+    console.log(message.content);
 });
 
 client.login(process.env.DISTOKEN);
@@ -67,7 +71,8 @@ node_schedule.scheduleJob('0 0 * * *', () => {
     waitingOnQOTD = sendQOTD(client);
 });
 
-setInterval(() => { waitingOnQOTD = sendQOTD(client); }, 10000);
+// Enable when testing
+//setInterval(() => { waitingOnQOTD = sendQOTD(client); }, 30000);
 
 
 // TODO Implement createQOTD command
