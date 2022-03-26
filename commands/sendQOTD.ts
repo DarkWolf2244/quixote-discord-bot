@@ -5,7 +5,7 @@ module.exports = {
     name: 'sendqotd',
     data: new SlashCommandBuilder()
             .setName("sendqotd")
-            .setDescription("Sends either a random QOTD or a specific custom QOTD. If no QOTD is specified, a random QOTD will be sent.")
+            .setDescription("Send a custom or random QOTD right now.")
             .addStringOption(option => option.setName("qotd").setRequired(false).setDescription("The QOTD to send")),
     
     async execute(interaction: any) {
