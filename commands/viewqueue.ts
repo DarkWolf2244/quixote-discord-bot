@@ -4,6 +4,7 @@ import { MessageEmbed } from "discord.js";
 let qotds = require('../qotd.json');
 
 module.exports = {
+    name: 'viewqueue',
     data: new SlashCommandBuilder()
             .setName("viewqueue")
             .setDescription("Views the approved queue"),

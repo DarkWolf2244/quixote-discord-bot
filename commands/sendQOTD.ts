@@ -2,6 +2,7 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { sendQOTD, sendCustomQOTD } from "../QOTDManager";
 
 module.exports = {
+    name: 'sendqotd',
     data: new SlashCommandBuilder()
             .setName("sendqotd")
             .setDescription("Sends either a random QOTD or a specific custom QOTD. If no QOTD is specified, a random QOTD will be sent.")
