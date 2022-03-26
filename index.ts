@@ -52,7 +52,7 @@ client.on('interactionCreate',  async (interaction: Interaction<CacheType>) => {
 });
 
 client.on('message', (message) => {
-    console.log(message.content);
+
 });
 
 client.login(process.env.DISTOKEN);
