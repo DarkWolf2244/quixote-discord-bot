@@ -132,3 +132,18 @@ export function sendQOTD(client: Client<boolean>): boolean {
         return true; // We are waiting for a QOTD
     }
 }
+
+export function sendCustomQOTD(client: Client, qotd: string) {
+    let qotdEmbed: MessageEmbedOptions = {
+        title: "Question of the Day",
+        description: qotd
+    }
+
+    let readyEmbed = new MessageEmbed(qotdEmbed);
+
+    readyEmbed.setColor("BLUE");
+
+    client.channels.fetch(readConfig().qotdChannel).then((channel: any) => {
+        channel.send({ embeds: [readyEmbed] });
+    });
+}
