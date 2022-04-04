@@ -9,7 +9,7 @@ module.exports = {
             .addStringOption(option => option.setName("qotd").setRequired(false).setDescription("The QOTD to send")),
     
     async execute(interaction: any) {
-            if (interaction.member.roles.cache.find(role => role.name === 'Quixote Controller')) {
+            if (interaction.member.roles.cache.some(role => role.name === 'Quixote Controller')) {
             const qotd = interaction.options.getString("qotd");
             
             if (qotd) {

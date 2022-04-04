@@ -54,7 +54,7 @@ module.exports = {
             let sentMessage = await approvalChannel.send({ embeds: [embed], components: [buttonRow] });
 
             addQOTD(qotd, user, sentMessage.id);
-            interaction.reply("Suggestion recorded!", { ephemeral: true });
+            interaction.reply({ content: "Okay, suggestion recorded.", ephemeral: true });
         }
     }
 }
