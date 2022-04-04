@@ -69,7 +69,3 @@ node_schedule.scheduleJob('0 0 * * *', () => {
 
 // Enable when testing
 //setInterval(() => { waitingOnQOTD = sendQOTD(client); }, 30000);
-
-
-// TODO Implement createQOTD command
-// TODO Implement sendQOTD command
