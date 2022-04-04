@@ -10,23 +10,26 @@ module.exports = {
             .setDescription("Views the approved queue"),
         
     async execute(interaction: any) {
-        let approvedQOTDs = qotds.filter(qotd => qotd.approved);
-        let embedData = {
-            title: "Approved QOTDs",
-            description: "",
-            fields: []
+        // Check if the user has a role called 'Quixote Controller'
+        if (interaction.member.roles.cache.find(role => role.name === 'Quixote Controller')) {
+            let approvedQOTDs = qotds.approvedQOTDs;
+            let embedData = {
+                title: "Approved QOTDs",
+                description: "",
+                fields: []
+            }
+
+            for (let qotd of approvedQOTDs) {
+                embedData.fields.push({
+                    name: qotd.content,
+                    value: `<@${qotd.user}>`
+                });
+            }
+
+            let embed = new MessageEmbed(embedData);
+            embed.setColor("GREEN");
+
+            interaction.reply({ embeds: embed});
         }
-
-        for (let qotd of approvedQOTDs) {
-            embedData.fields.push({
-                name: qotd.content,
-                value: `<@${qotd.user}>`
-            });
-        }
-
-        let embed = new MessageEmbed(embedData);
-        embed.setColor("GREEN");
-
-        interaction.reply({ embeds: embed});
     }
 }

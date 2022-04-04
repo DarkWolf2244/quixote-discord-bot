@@ -9,13 +9,15 @@ module.exports = {
             .addStringOption(option => option.setName("qotd").setRequired(false).setDescription("The QOTD to send")),
     
     async execute(interaction: any) {
-        const qotd = interaction.options.getString("qotd");
-        
-        if (qotd) {
-            sendCustomQOTD(interaction.client, qotd);
-        } else {
-            sendQOTD(interaction.client);
-            interaction.reply("Sent a random QOTD.", { ephemeral: true });
+            if (interaction.member.roles.cache.find(role => role.name === 'Quixote Controller')) {
+            const qotd = interaction.options.getString("qotd");
+            
+            if (qotd) {
+                sendCustomQOTD(interaction.client, qotd);
+            } else {
+                sendQOTD(interaction.client);
+                interaction.reply("Sent a random QOTD.", { ephemeral: true });
+            }
         }
     }
 }
