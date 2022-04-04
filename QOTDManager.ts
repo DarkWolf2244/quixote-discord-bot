@@ -1,20 +1,10 @@
 import * as fs from 'fs';
-import { GuildMember, MessageEmbed, MessageEmbedOptions, User } from 'discord.js';
+import { ButtonInteraction, CommandInteraction, GuildMember, MessageEmbed, MessageEmbedOptions, User, Message } from 'discord.js';
 import { readConfig, writeConfig } from './ConfigManager';
 import { Client } from 'discord.js';
+import { QOTDFileInterface, QOTDInterface } from './interfaces';
 
-interface QOTDInterface {
-    userID: string;
-    content: string,
-    approvalMessageId: string
-}
-
-interface QOTDConfigInterface {
-    suggestions: QOTDInterface[];
-    approvedQOTDs: QOTDInterface[];
-}
-
-let qotds: QOTDConfigInterface = require('./qotd.json');
+let qotds: QOTDFileInterface = require('./qotd.json');
 
 export function addQOTD(qotd: string, user: any, approvalMessageId: string) {
     qotds.suggestions.push({
@@ -26,7 +16,7 @@ export function addQOTD(qotd: string, user: any, approvalMessageId: string) {
     fs.writeFileSync('./qotd.json', JSON.stringify(qotds, null, 4));
 }
 
-export function approveQOTD(interaction, waitingOnQOTD: boolean) {
+export function approveQOTD(interaction: ButtonInteraction, waitingOnQOTD: boolean) {
     qotds.suggestions.forEach((qotd, index) => {
         if (qotd.approvalMessageId === interaction.message.id) {
             qotds.approvedQOTDs.push(qotd);
@@ -45,6 +35,10 @@ export function approveQOTD(interaction, waitingOnQOTD: boolean) {
             let readyEmbed = new MessageEmbed(editedEmbed);
 
             readyEmbed.setColor("GREEN");
+            
+            let interactionMessage: any = interaction.message;
+            let actualMessage: Message = interactionMessage;
+            interaction.message = actualMessage; // Aaaaaah
 
             interaction.message.edit({ embeds: [readyEmbed] });
             interaction.reply({ content: "QOTD approved!", ephemeral: true });
@@ -56,7 +50,7 @@ export function approveQOTD(interaction, waitingOnQOTD: boolean) {
     if (waitingOnQOTD) sendQOTD(interaction.client);
 }
 
-export function rejectQOTD(interaction) {
+export function rejectQOTD(interaction: ButtonInteraction) {
     // TODO DM the user that their QOTD was rejected
     // Delete the QOTD suggestion
     qotds.suggestions.forEach((qotd, index) => {
@@ -83,6 +77,10 @@ export function rejectQOTD(interaction) {
     readyEmbed.setColor("RED");
 
     fs.writeFileSync('./qotd.json', JSON.stringify(qotds, null, 4));
+
+    let interactionMessage: any = interaction.message;
+    let actualMessage: Message = interactionMessage;
+    interaction.message = actualMessage; // Aaaaaah again
 
     interaction.message.edit({ embeds: [readyEmbed] });
     interaction.reply( { content: "QOTD rejected!", ephemeral: true } );
