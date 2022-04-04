@@ -27,6 +27,6 @@ module.exports = {
         let embed = new MessageEmbed(embedData);
         embed.setColor("GREEN");
 
-        interaction.reply(embed);
+        interaction.reply({ embeds: embed});
     }
 }
