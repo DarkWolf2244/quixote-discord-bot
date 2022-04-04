@@ -19,7 +19,7 @@ module.exports = {
 
         for (let qotd of approvedQOTDs) {
             embedData.fields.push({
-                name: qotd.qotd,
+                name: qotd.content,
                 value: `<@${qotd.user}>`
             });
         }
