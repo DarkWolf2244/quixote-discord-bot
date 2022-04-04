@@ -51,10 +51,6 @@ client.on('interactionCreate',  async (interaction: Interaction<CacheType>) => {
     }
 });
 
-client.on('message', (message) => {
-    
-});
-
 client.login(process.env.DISTOKEN);
 
 let app = express();

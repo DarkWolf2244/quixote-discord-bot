@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { MessageEmbed } from "discord.js";
+import { CommandInteraction, GuildMemberRoleManager, Interaction, MessageEmbed } from "discord.js";
 
 let qotds = require('../qotd.json');
 
@@ -9,9 +9,13 @@ module.exports = {
             .setName("viewqueue")
             .setDescription("Views the approved queue"),
         
-    async execute(interaction: any) {
+    async execute(interaction: CommandInteraction) {
         // Check if the user has a role called 'Quixote Controller'
-        if (interaction.member.roles.cache.find(role => role.name === 'Quixote Controller')) {
+        let memberRoleManager: any = interaction.member.roles;
+        let roleManager: GuildMemberRoleManager = memberRoleManager;
+
+        if (roleManager.cache.has("Quixote Controller")) {
+
             let approvedQOTDs = qotds.approvedQOTDs;
             let embedData = {
                 title: "Approved QOTDs",
@@ -29,7 +33,8 @@ module.exports = {
             let embed = new MessageEmbed(embedData);
             embed.setColor("GREEN");
 
-            interaction.reply({ embeds: embed});
+            interaction.reply({ embeds: [ embed ] });
         }
     }
+    
 }
